@@ -1,0 +1,22 @@
+.item.ng-enter,
+.item.ng-leave,
+.item.ng-move {
+  -webkit-transition:all ease-out 0.3s;
+  -moz-transition:all ease-out 0.3s;
+  -o-transition:all ease-out 0.3s;
+  transition:all ease-out 0.3s;
+}
+.item.ng-enter {
+  opacity:0;
+   /* z-index: -1;*/
+  transform: scale(0);
+-ms-transform: scale(0); /* IE 9 */
+-webkit-transform: scale(0); /* Safari and Chrome */
+}
+.item.ng-enter. ng-enter-active {
+  opacity:1;
+  /*z-index: 0;*/
+   transform: scale(1);
+-ms-transform: scale(1); /* IE 9 */
+-webkit-transform: scale(1); 
+}

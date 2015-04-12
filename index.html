@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en" ng-app="cromoflixGallery">
+<head>
+  <meta charset="utf-8">
+  <title>My AngularJS App</title>
+  <link href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
+  <link rel="stylesheet" href="css/horizontal-search-gallery.css"/>
+  <link rel="stylesheet" href="css/animateGallery.css"/>
+  <!--
+  <link rel="stylesheet" href="css/custom.css"/>
+  <link rel="stylesheet" href="css/component.css"/>
+-->
+</head>
+
+<body style="overflow-x:hidden; overflow-y:hidden;" ng-input="input=''">
+  <div id="blocker">
+      <div id="instructions">
+        <span style="font-size:40px">Click to enter the Cromoflix virtual gallery</span>
+        <br />
+        (W, A, S, D = Move, SPACE = Jump, MOUSE = Look around)
+      </div>
+  </div>
+  <div id="container" ng-controller="3dController">
+    </div>
+	<!--
+  <div class="threeDGalleryContainer animate" ng-class="{showControls: showControls}">
+    <div class="searchTool animate">
+      <div class="openSearchIconContainer animate" ng-click="showControls = !showControls">
+        <i class="openSearchToolIcon fa"  ng-class="{'fa-arrow-down': showControls, 'fa-arrow-up':!showControls}"></i>
+      </div>
+      <input type:"text" class="searchToolInput" ng-model="input" ng-click="showControls = true"></input>
+      <div class="searchIconContainer animate" ng-click="searchTerm = input">
+        <i class="searchToolIcon fa fa-search"></i>
+      </div>
+    </div>
+    <div loading loading-event="cromoSearchGalleryLoading"></div>
+    <cromo-search-gallery search-term="searchTerm"></cromo-search-gallery>
+  </div>
+  -->
+  
+  <script src="lib/jquery/jquery-1.7.1.min.js"></script>
+  <script src="lib/angular/angular.min.js"></script>
+  <script src="lib/angular/angular-resource.min.js"></script>
+  <script src="lib/angular/angular-animate.min.js"></script>
+  <script src="lib/underscore/underscore-min.js"></script>
+  <script src="js/underscore.js"></script>
+  <script src="js/app.js"></script>
+  <script src="js/searchGalleryController.js"></script>
+  <script src="js/cromoSearchGallery.js"></script>
+  <script src="js/factories.js"></script>
+  <script src="js/loading.js"></script>
+  <script src="js/threejs/three.min.js"></script>
+  <script src="js/threejs/CopyShader.js"></script>
+  <script src="js/threejs/EffectComposer.js"></script>
+  <script src="js/threejs/DDSLoader.js"></script>
+  <script src="js/threejs/MTLLoader.js"></script>
+  <script src="js/threejs/OBJMTLLoader.js"></script>
+  <script src="js/threejs/Detector.js"></script>
+  <script src="js/threejs/stats.min.js"></script>
+  <script src="js/threejs/TrackballControls.js"></script>
+  <script src="js/threejs/PointerLockControls.js"></script>
+  <script src="js/threejs/FirstPersonControls.js"></script>
+  <script src="js/3dController.js"></script>
+  <script src="js/threejs/WebGLDeferredRenderer.js"></script>
+  <script src="js/threejs/ShaderDeferred.js"></script>
+    <script src="js/threejs/FXAAShader.js"></script>
+    <script src="js/threejs/RenderPass.js"></script>
+    <script src="js/threejs/ShaderPass.js"></script>
+    <script src="js/threejs/MaskPass.js"></script>
+</body>
+</html>

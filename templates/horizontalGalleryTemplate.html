@@ -1,0 +1,46 @@
+<div class="galleryContainer" ng-controller="searchGalleryController">
+    <div id='myContainer' scroll-wheel>
+        <div class="item masonrycolumn" ng-model="image" ng-repeat="image in images" ng-class="{blur: !image.selected}">
+            <div class="panel" ng-click="showBack=!showBack">
+                <div class="front card" ng-class="{rotateFront: showBack}">
+                    <div style="position: absolute; width: 250px; height: 200px;">
+                        <img class="image" ng-src="{{image.ImageUrl}}"/>
+                    </div>
+                    <div class="imageDescrContainer">
+                        <div style="position: absolute;width: 250px;height: 100px;">
+                            <span style="position: absolute; left:10px; top:-40px">Artist</span>
+                            <a style="position: absolute; left:10px; top:-20px" ng-href="{{image.ArtistLink}}">{{image.ArtistName}}</a>
+                        </div>
+                        <div style="height:100px; top: 100px; width:250px; position: absolute; overflow:hidden;white-space: nowrap;">
+                            <span style="position: absolute; left:10px; top:-80px">Title</span>
+                            <a style="position: absolute; left:10px; top:-60px; text-overflow:ellipsis;max-width: 230px;" ng-href="{{image.ImageLink}}">{{image.ImageName}}</a>    
+                        </div>
+                    </div>
+                </div>
+                <div class="back card" ng-class="{rotateBack: showBack}">  
+                    <div class="blackbg-artist">
+                        <div class="image-artist">
+                            <a ng-href="{{image.ArtistLink}}">{{image.ArtistName}}
+                            </a>
+                        </div>
+                    </div>
+                    <div class="blackbg">
+                        <div class="image-descr">
+                            <a ng-href="{{image.ImageLink}}">{{image.ShortDescription}}
+                            </a>
+                        </div>
+                    </div>  
+                </div>
+            </div>
+        </div>
+    </div>
+    <a id="dz-arrow-previous" href="#" class="leftArrow animate" style="left: -79px; top: 60.5px; width: 79px; height: 79px; overflow: visible; z-index:100;"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAE8AAABPBAMAAABYGoW1AAAAA3NCSVQICAjb4U/gAAAAMFBMVEX///////////////////////////////////////////////////////////////9Or7hAAAAAEHRSTlMAESIzRFVmd4iZqrvM3e7/dpUBFQAAAAlwSFlzAAAOdAAADnQBaySz1gAAABx0RVh0U29mdHdhcmUAQWRvYmUgRmlyZXdvcmtzIENTNAay06AAAADtSURBVEiJ7dS9DcJADAXgSwihpYN01NDQ02QAGAGJCRATJGICxARILIAEAzACDdR0UKZC4v8IsVO/V9Bxr/4U2bF9xri4uPwqEenCjHOVraWcl1oODi0H25aDtYyDwc5S0FtYDo7F3ZDriXvGwDXEvSfAVY8C58D5K3F7VGAi7oxcX9y9BVwk7hUDF2Zcw/kKFlmiAlNxF+TKCuFIjBnokOtQ6l88QehrOxsoy0lPoWzq7oyg1G18dKHUhq6w9fJiDvCTgTa0hlKumrnrDguLl4eC3oyEspoMLBqi4Hc5OZgvJwlNwkKfhS4uf5QPlP7bRzgxDtUAAAAASUVORK5CYII=" alt="" style="background-color: #0099cc;" ng-click="scrollLeft()"></a>
+
+    <a id="dz-arrow-next" href="#" class="rightArrow animate" style="right: -79px; top: 60.5px; width: 79px; height: 79px; overflow: visible; z-index:100;"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAE8AAABPBAMAAABYGoW1AAAAA3NCSVQICAjb4U/gAAAAMFBMVEX///////////////////////////////////////////////////////////////9Or7hAAAAAEHRSTlMAESIzRFVmd4iZqrvM3e7/dpUBFQAAAAlwSFlzAAAOdAAADnQBaySz1gAAABx0RVh0U29mdHdhcmUAQWRvYmUgRmlyZXdvcmtzIENTNAay06AAAADfSURBVEiJ7dQ9DoJAFARgiEQKY7DUjiPY23AET2A4gl6AxBMYT2DiEfQANvY0egUtLf1BeBJG6pnYulN/ednNzj7Pc3Fx+TWBCqOtCqu5CO2diNAeAxHaRYW2U6EtVFgmFPYbaK+YQX8FeaUjOwfII5XdG+SSyiFglVI5gSxiKjPIO31LfwN5oiODHJKXM8TVhXKOMJKXsx2ZiodcEydfOxOboT7N97HLKXFqfdpC7omTKz6De7Lm9Ez8hpFaBkBhVTTwzF0DpXVWw2IsuBqKKzeiFWwh/3lIKDoXl3/OB6lt29BmFBP5AAAAAElFTkSuQmCC" alt="" style="background-color: #0099cc;" ng-click="scrollRight()"></a>
+
+    <div class="leftMask">
+    </div>
+    <div class="rightMask">
+    </div>
+</div>
+

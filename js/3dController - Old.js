@@ -15,6 +15,17 @@ angular.module('cromoflixGallery.controllers').
 	var instructions = document.getElementById( 'instructions' );
 	var havePointerLock = 'pointerLockElement' in document || 'mozPointerLockElement' in document || 'webkitPointerLockElement' in document;
 
+	var controlsEnabled = false;
+
+	var moveForward = false;
+	var moveBackward = false;
+	var moveLeft = false;
+	var moveRight = false;
+
+	var prevTime = performance.now();
+	var velocity = new THREE.Vector3();
+
+
 	if ( havePointerLock ) {
 
 		var element = document.body;
@@ -23,6 +34,7 @@ angular.module('cromoflixGallery.controllers').
 
 			if ( document.pointerLockElement === element || document.mozPointerLockElement === element || document.webkitPointerLockElement === element ) {
 
+				controlsEnabled = true;
 				controls.enabled = true;
 
 				blocker.style.display = 'none';
@@ -118,13 +130,78 @@ angular.module('cromoflixGallery.controllers').
 
 	}
 
+
+
 	function initControls( ) {
 
 		controls = new THREE.PointerLockControls( camera );
 		
 		scene.add( controls.getObject() );
 
-		controls.enabled = false;
+		var onKeyDown = function ( event ) {
+
+			switch ( event.keyCode ) {
+
+				case 38: // up
+				case 87: // w
+					moveForward = true;
+					break;
+
+				case 37: // left
+				case 65: // a
+					moveLeft = true; break;
+
+				case 40: // down
+				case 83: // s
+					moveBackward = true;
+					break;
+
+				case 39: // right
+				case 68: // d
+					moveRight = true;
+					break;
+
+				case 32: // space
+					if ( canJump === true ) velocity.y += 350;
+					canJump = false;
+					break;
+
+			}
+
+		};
+
+		var onKeyUp = function ( event ) {
+
+			switch( event.keyCode ) {
+
+				case 38: // up
+				case 87: // w
+					moveForward = false;
+					break;
+
+				case 37: // left
+				case 65: // a
+					moveLeft = false;
+					break;
+
+				case 40: // down
+				case 83: // s
+					moveBackward = false;
+					break;
+
+				case 39: // right
+				case 68: // d
+					moveRight = false;
+					break;
+
+			}
+
+		};
+
+		document.addEventListener( 'keydown', onKeyDown, false );
+		document.addEventListener( 'keyup', onKeyUp, false );
+
+//		controls.enabled = false;
 
 		// Hook pointer lock state change events
 		document.addEventListener( 'pointerlockchange', pointerlockchange, false );
@@ -200,6 +277,7 @@ angular.module('cromoflixGallery.controllers').
 
 		var texture = new THREE.Texture(canvas);
 		texture.needsUpdate = true;
+		texture.minFilter = THREE.LinearFilter;
 
 		var material = new THREE.MeshBasicMaterial({
 			map : texture, transparent : true
@@ -254,11 +332,15 @@ angular.module('cromoflixGallery.controllers').
 
 //		THREE.Loader.Handlers.add( /\.dds$/i, new THREE.DDSLoader() );
 //
-		var loader = new THREE.OBJMTLLoader( );
-		loader.load( './model/room.obj', './model/room.mtl', function ( object ) { addObjectToScene( object ) } ); 
+//		var loader = new THREE.OBJMTLLoader( );
+//		loader.load( './model/room.obj', './model/room.mtl', function ( object ) { addObjectToScene( object ) } ); 
 		
-//	    var jsonLoader = new THREE.JSONLoader();
-//      jsonLoader.load( "./model/room.js", createScene );
+		var loader = new THREE.JSONLoader();
+	    loader.load( "./model/room.json", function(geometry){
+	      var material = new THREE.MeshLambertMaterial({color: 0x55B663});
+	      mesh = new THREE.Mesh(geometry, material);
+	      scene.add(mesh);
+	    });
 
 		opera[0]=new Opera('Artist: Alik Vetrof\ncity ​​after rain\ncity ​​after rain 2012, 75x125cm oil on canvas\nгород после дождя 2012, 75x125cm холст, масло', 75, 125, '/images/0002380_city-after-rain_700.jpeg');
 		addOpera(opera[0]);	
@@ -445,36 +527,49 @@ angular.module('cromoflixGallery.controllers').
 	function animate() {
 
 		requestAnimationFrame( animate );
-		
+
+		var time = performance.now();
+		var delta = ( time - prevTime ) / 1000;
+
+		velocity.x -= velocity.x * 10.0 * delta;
+		velocity.z -= velocity.z * 10.0 * delta;
+
+		velocity.y -= 9.8 * 100.0 * delta; // 100.0 = mass
+
+		if ( moveForward ) velocity.z -= 400.0 * delta;
+		if ( moveBackward ) velocity.z += 400.0 * delta;
+		if ( moveLeft ) velocity.x -= 400.0 * delta;
+		if ( moveRight ) velocity.x += 400.0 * delta;
+
 		// get camera direction
 		var cameraDirection = controls.getDirection(new THREE.Vector3(0, 0, 0)).clone();
 
 		var rotationMatrix = new THREE.Matrix4();
-		if ((controls.moveForward()) && (controls.moveRight())) {
+		if ((moveForward) && (controls.moveRight())) {
 			rotationMatrix = new THREE.Matrix4();
 		    rotationMatrix.makeRotationY((360-45) * Math.PI / 180);
 		}
-		else if ((controls.moveForward()) && (controls.moveLeft())) {
+		else if ((moveForward) && (moveLeft())) {
 			rotationMatrix = new THREE.Matrix4();
 		    rotationMatrix.makeRotationY(45 * Math.PI / 180);
 		}
-		else if ((controls.moveBackward()) && (controls.moveRight())) {
+		else if ((moveBackward) && (moveRight)) {
 			rotationMatrix = new THREE.Matrix4();
 		    rotationMatrix.makeRotationY((180 + 45) * Math.PI / 180);
 		}
-		else if ((controls.moveBackward()) && (controls.moveLeft())) {
+		else if ((moveBackward) && (moveLeft)) {
 			rotationMatrix = new THREE.Matrix4();
 		    rotationMatrix.makeRotationY((180 - 45) * Math.PI / 180);
 		}
-		else if (controls.moveBackward()) {
+		else if (moveBackward) {
 			rotationMatrix = new THREE.Matrix4();
 		    rotationMatrix.makeRotationY(180 * Math.PI / 180);
 		}
-		else if (controls.moveLeft()) {
+		else if (moveLeft) {
 			rotationMatrix = new THREE.Matrix4();
 		    rotationMatrix.makeRotationY(90 * Math.PI / 180);
 		}
-		else if (controls.moveRight()) {
+		else if (moveRight) {
 			rotationMatrix = new THREE.Matrix4();
 		    rotationMatrix.makeRotationY((360-90) * Math.PI / 180);
 		} 
@@ -482,18 +577,22 @@ angular.module('cromoflixGallery.controllers').
 		    cameraDirection.applyMatrix4(rotationMatrix);
 		}
 
+		controls.getObject().translateX( velocity.x * delta );
+		controls.getObject().translateY( velocity.y * delta );
+		controls.getObject().translateZ( velocity.z * delta );
+
 		// check intersections
-		controls.isOnObject( false );
-		controls.isOnObstacle( false );
+//		controls.isOnObject( false );
+//		controls.isOnObstacle( false );
 
 		raycasterdown.ray.origin.copy( controls.getObject().position );
 		raycasterdown.ray.origin.y += offsety;
 
 		var intersections = raycasterdown.intersectObjects( objects );
 
-		if ( intersections.length > 0 ) {
+/*		if ( intersections.length > 0 ) {
 			controls.isOnObject( true );
-		}
+		} */
 
 		raycaster.ray.origin.copy( controls.getObject().position );
 		raycaster.ray.origin.y += offsety + 23;
@@ -502,16 +601,18 @@ angular.module('cromoflixGallery.controllers').
 
 		var intersections = raycaster.intersectObjects( objects );
 
-		if ( intersections.length > 0 ) {
+/*		if ( intersections.length > 0 ) {
 			controls.isOnObstacle( true );
-		} 
+		} */
 
+		prevTime = time;
+		
 		render();
 	}
 
 	function render() {
 
-		controls.update( );
+//		controls.update( );
 //		camera.updateProjectionMatrix();
 		renderer.render( scene, camera );
 	}

@@ -2,14 +2,40 @@
  * @author mrdoob / http://mrdoob.com/
  */
 
-var THREE = { REVISION: '68' };
+var THREE = { REVISION: '71' };
 
 // browserify support
+
 if ( typeof module === 'object' ) {
 
 	module.exports = THREE;
 
 }
+
+// polyfills
+
+if ( Math.sign === undefined ) {
+
+	// https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/sign
+
+	Math.sign = function ( x ) {
+
+		return ( x < 0 ) ? - 1 : ( x > 0 ) ? 1 : +x;
+
+	};
+
+}
+
+
+// set the default log handlers
+THREE.log = function() { console.log.apply( console, arguments ); }
+THREE.warn = function() { console.warn.apply( console, arguments ); }
+THREE.error = function() { console.error.apply( console, arguments ); }
+
+
+// https://developer.mozilla.org/en-US/docs/Web/API/MouseEvent.button
+
+THREE.MOUSE = { LEFT: 0, MIDDLE: 1, RIGHT: 2 };
 
 // GL STATE CONSTANTS
 
@@ -63,6 +89,8 @@ THREE.CustomBlending = 5;
 THREE.AddEquation = 100;
 THREE.SubtractEquation = 101;
 THREE.ReverseSubtractEquation = 102;
+THREE.MinEquation = 103;
+THREE.MaxEquation = 104;
 
 // custom blending destination factors
 
@@ -96,13 +124,15 @@ THREE.AddOperation = 2;
 
 // Mapping modes
 
-THREE.UVMapping = function () {};
+THREE.UVMapping = 300;
 
-THREE.CubeReflectionMapping = function () {};
-THREE.CubeRefractionMapping = function () {};
+THREE.CubeReflectionMapping = 301;
+THREE.CubeRefractionMapping = 302;
 
-THREE.SphericalReflectionMapping = function () {};
-THREE.SphericalRefractionMapping = function () {};
+THREE.EquirectangularReflectionMapping = 303;
+THREE.EquirectangularRefractionMapping = 304;
+
+THREE.SphericalReflectionMapping = 305;
 
 // Wrapping modes
 
@@ -128,6 +158,7 @@ THREE.UnsignedShortType = 1012;
 THREE.IntType = 1013;
 THREE.UnsignedIntType = 1014;
 THREE.FloatType = 1015;
+THREE.HalfFloatType = 1025;
 
 // Pixel types
 
@@ -143,18 +174,61 @@ THREE.RGBFormat = 1020;
 THREE.RGBAFormat = 1021;
 THREE.LuminanceFormat = 1022;
 THREE.LuminanceAlphaFormat = 1023;
+// THREE.RGBEFormat handled as THREE.RGBAFormat in shaders
+THREE.RGBEFormat = THREE.RGBAFormat; //1024;
 
-// Compressed texture formats
+// DDS / ST3C Compressed texture formats
 
 THREE.RGB_S3TC_DXT1_Format = 2001;
 THREE.RGBA_S3TC_DXT1_Format = 2002;
 THREE.RGBA_S3TC_DXT3_Format = 2003;
 THREE.RGBA_S3TC_DXT5_Format = 2004;
 
-/*
-// Potential future PVRTC compressed texture formats
+
+// PVRTC compressed texture formats
+
 THREE.RGB_PVRTC_4BPPV1_Format = 2100;
 THREE.RGB_PVRTC_2BPPV1_Format = 2101;
 THREE.RGBA_PVRTC_4BPPV1_Format = 2102;
 THREE.RGBA_PVRTC_2BPPV1_Format = 2103;
-*/
+
+
+// DEPRECATED
+
+THREE.Projector = function () {
+
+	THREE.error( 'THREE.Projector has been moved to /examples/js/renderers/Projector.js.' );
+
+	this.projectVector = function ( vector, camera ) {
+
+		THREE.warn( 'THREE.Projector: .projectVector() is now vector.project().' );
+		vector.project( camera );
+
+	};
+
+	this.unprojectVector = function ( vector, camera ) {
+
+		THREE.warn( 'THREE.Projector: .unprojectVector() is now vector.unproject().' );
+		vector.unproject( camera );
+
+	};
+
+	this.pickingRay = function ( vector, camera ) {
+
+		THREE.error( 'THREE.Projector: .pickingRay() is now raycaster.setFromCamera().' );
+
+	};
+
+};
+
+THREE.CanvasRenderer = function () {
+
+	THREE.error( 'THREE.CanvasRenderer has been moved to /examples/js/renderers/CanvasRenderer.js' );
+
+	this.domElement = document.createElement( 'canvas' );
+	this.clear = function () {};
+	this.render = function () {};
+	this.setClearColor = function () {};
+	this.setSize = function () {};
+
+};

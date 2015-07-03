@@ -63,8 +63,8 @@ var SceneManager = function( document ) {
 
 		var bokehPass = new THREE.BokehPass( scene, camera, {
 					focus: 		1.0,
-					aperture:	0.015,
-					maxblur:	0.5,
+					aperture:	0.008,
+					maxblur:	0.3,
 
 					width: window.innerWidth,
 					height: window.innerHeight

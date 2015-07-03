@@ -10,7 +10,7 @@ var SceneManager = function( document ) {
 	var globalShadows = false;
 
 	// switch composer render
-	var useComposer = false;
+	var useComposer = true;
 
 	// all objects translate y axis
 	var offsety = -165;
@@ -132,7 +132,7 @@ var SceneManager = function( document ) {
  		// ambient light
  		this.createAmbientLight( 0x333333 );
 
- //		this.createHemiLight( 0xddffdd, 0x111122, 0.3, [ 0, 500 + offsety, 0 ] );
+// 		this.createHemiLight( 0xddffdd, 0x111122, 0.3, [ 0, 500 + offsety, 0 ] );
 
  		// external lights
 // 		this.createDirectionalLight( 0xffeeaa, [ 830, 150 + offsety, -700 ]);
@@ -140,11 +140,11 @@ var SceneManager = function( document ) {
 //		this.createSpotLight( 0xffeeaa, 1, [ 830, 150 + offsety, -500 ], [ 350, 0 + offsety, -600 ], false );
 
 		// central lamp light
-		this.createPointLight( 0xdddddd, 1, 800, [ -150.036, 200 + offsety, -172.72 ] );
+		this.createPointLight( 0xdddddd, 1, 600, [ -150.036, 200 + offsety, -172.72 ] );
 //		this.createSpotLight( 0xffffff, 1, [ -150.036, 200 + offsety, -172.72 ], [ -150.036, 0 + offsety, -172.72 ], false );
 
 		// sofa light
-		this.createPointLight( 0xdddddd, 1, 800, [ 419.5, 239 + offsety, 49.609 ] );
+		this.createPointLight( 0xdddddd, 1, 600, [ 419.5, 239 + offsety, 49.609 ] );
 //		this.createSpotLight( 0xffffff, 1, [ 419.5, 239 + offsety, 49.609 ], [ 350, 0 + offsety, -800 ], false );
 
 		// opera light
@@ -167,23 +167,22 @@ var SceneManager = function( document ) {
 
 	      			// pre processing ops.
 	      			child.position.y += offsety;
-//	      			child.geometry.computeVertexNormals();
-//	      			child.geometry.computeTangents();
+	      			child.geometry.computeVertexNormals();
+	      			child.geometry.computeTangents();
 
 	      			// material
+	 				var newMaterial = new THREE.MeshPhongMaterial( child.material );
 
-	 				var newMaterial = new THREE.MeshLambertMaterial( child.material );
-
-					if (child.material.name.indexOf("Flat") >= 0) {
+					if (child.material.name.indexOf("Flat") > 0) {
 	      				newMaterial.shading = THREE.FlatShading;
 	      			} else {
 	      				newMaterial.shading = THREE.SmoothShading;
 	      			}
 
-	 				if (child.material.mapBump != null) {
+	 				if (child.material.bumpMap != null) {
 
-						child.material.normalMap = child.material.mapBump;
-	 					child.material.mapBump = null; 
+						child.material.normalMap = child.material.bumpMap;
+	 					child.material.bumpMap = null; 
 						child.material.normalScale = new THREE.Vector2( 0.5, 0.5); 
 
 //						newMaterial.ambient = 13421772;
@@ -191,8 +190,10 @@ var SceneManager = function( document ) {
 						
 						newMaterial.emissive = 0; 
 						newMaterial.shininess = 2;*/
-	 					newMaterial.normalMap = child.material.mapBump;
-	 					newMaterial.mapBump = null; 
+//						newMaterial.specular = newMaterial.color;
+						newMaterial.specular = new THREE.Color(0.2, 0.2, 0.2);
+	 					newMaterial.normalMap = child.material.bumpMap;
+	 					newMaterial.bumpMap = null; 
 //	 					newMaterial.normalScale = new THREE.Vector2( 0.5, 0.5);
 						newMaterial.wrapRGB = new THREE.Vector3( 0.5, 0.5, 0.5 );
 						newMaterial.wrapAround = true;

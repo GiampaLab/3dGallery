@@ -4,7 +4,7 @@ var SceneManager = function( document ) {
 	var camera = new THREE.PerspectiveCamera( 60, window.innerWidth / window.innerHeight, 1, 2000 );
 
 	var scene = new THREE.Scene();
-//	scene.fog = new THREE.Fog( 0xcccccc, 500, 3000 );
+	scene.fog = new THREE.Fog( 0x9999ff, 800, 3500 );
 	
 	// switch shadows
 	var globalShadows = false;
@@ -18,11 +18,17 @@ var SceneManager = function( document ) {
 	// list of objects for collision detection
 	var collisionObjects = [];
 
+	// vars for DOF shader
+	var postprocessing = {};
+	var material_depth = new THREE.MeshDepthMaterial();
+
+	// renderer
 	var renderer = new THREE.WebGLRenderer();
 	renderer.setClearColor( 0xffffff );
 	renderer.setPixelRatio( window.devicePixelRatio );
 	renderer.setSize( window.innerWidth, window.innerHeight-50 );
-	renderer.sortObjects = true;
+	renderer.sortObjects = false;
+	renderer.physicallyBasedShading = true;
 
 	if ( globalShadows ) {
 		renderer.shadowMapEnabled = true;
@@ -43,21 +49,52 @@ var SceneManager = function( document ) {
 		var renderModel = new THREE.RenderPass( scene, camera );
 
 		var effectBleach = new THREE.ShaderPass( THREE.BleachBypassShader );
-		effectBleach.uniforms[ 'opacity' ].value = 0.4;
+		effectBleach.uniforms[ 'opacity' ].value = 0.6;
 
-		var effectColor = new THREE.ShaderPass( THREE.ColorCorrectionShader );
-		effectColor.uniforms[ 'powRGB' ].value.set( 1.4, 1.45, 1.45 );
-		effectColor.uniforms[ 'mulRGB' ].value.set( 1.1, 1.1, 1.1 );
+//		var effectColor = new THREE.ShaderPass( THREE.ColorCorrectionShader );
+//		effectColor.uniforms[ 'powRGB' ].value.set( 1.4, 1.45, 1.45 );
+//		effectColor.uniforms[ 'mulRGB' ].value.set( 1.1, 1.1, 1.1 );
 
 		effectFXAA = new THREE.ShaderPass( THREE.FXAAShader );
 		effectFXAA.uniforms[ 'resolution' ].value.set( 1 / window.innerWidth, 1 / window.innerHeight );
 		effectFXAA.renderToScreen = true;
 
+		// DOF shader
+
+		var bokehPass = new THREE.BokehPass( scene, camera, {
+					focus: 		1.0,
+					aperture:	0.015,
+					maxblur:	0.5,
+
+					width: window.innerWidth,
+					height: window.innerHeight
+				} );
+
+		bokehPass.renderToScreen = true;
+
+/*		var effectController  = {
+
+					focus: 		1.0,
+					aperture:	0.025,
+					maxblur:	1.0
+
+		};
+
+		var matChanger = function( ) {
+
+				bokehPass.uniforms[ "focus" ].value = effectController.focus;
+				bokehPass.uniforms[ "aperture" ].value = effectController.aperture;
+				bokehPass.uniforms[ "maxblur" ].value = effectController.maxblur;
+
+		}; */
+
 		composer = new THREE.EffectComposer( renderer );
 		composer.addPass( renderModel );
 		composer.addPass( effectBleach );
 //		composer.addPass( effectColor );
-		composer.addPass( effectFXAA );
+//		composer.addPass( effectFXAA );
+		composer.addPass( bokehPass );
+		
 
 	}
 
@@ -140,11 +177,11 @@ var SceneManager = function( document ) {
 //		this.createSpotLight( 0xffeeaa, 1, [ 830, 150 + offsety, -500 ], [ 350, 0 + offsety, -600 ], false );
 
 		// central lamp light
-		this.createPointLight( 0xdddddd, 1, 600, [ -150.036, 200 + offsety, -172.72 ] );
+		this.createPointLight( 0x999999, 1, 600, [ -150.036, 200 + offsety, -172.72 ] );
 //		this.createSpotLight( 0xffffff, 1, [ -150.036, 200 + offsety, -172.72 ], [ -150.036, 0 + offsety, -172.72 ], false );
 
 		// sofa light
-		this.createPointLight( 0xdddddd, 1, 600, [ 419.5, 239 + offsety, 49.609 ] );
+		this.createPointLight( 0x999999, 1, 600, [ 419.5, 239 + offsety, 49.609 ] );
 //		this.createSpotLight( 0xffffff, 1, [ 419.5, 239 + offsety, 49.609 ], [ 350, 0 + offsety, -800 ], false );
 
 		// opera light
@@ -167,8 +204,11 @@ var SceneManager = function( document ) {
 
 	      			// pre processing ops.
 	      			child.position.y += offsety;
-	      			child.geometry.computeVertexNormals();
-	      			child.geometry.computeTangents();
+//	      			child.geometry.computeVertexNormals();
+//	      			child.geometry.computeTangents();
+
+//					child.geometry.matrixAutoUpdate = false;
+//					child.geometry.updateMatrix();
 
 	      			// material
 	 				var newMaterial = new THREE.MeshPhongMaterial( child.material );
@@ -185,17 +225,13 @@ var SceneManager = function( document ) {
 	 					child.material.bumpMap = null; 
 						child.material.normalScale = new THREE.Vector2( 0.5, 0.5); 
 
-//						newMaterial.ambient = 13421772;
-/*						newMaterial.specular = 5855577;
-						
-						newMaterial.emissive = 0; 
-						newMaterial.shininess = 2;*/
+//						newMaterial.shininess = 50;
 //						newMaterial.specular = newMaterial.color;
-						newMaterial.specular = new THREE.Color(0.2, 0.2, 0.2);
+//						newMaterial.specular = new THREE.Color(0.2, 0.2, 0.2);
 	 					newMaterial.normalMap = child.material.bumpMap;
 	 					newMaterial.bumpMap = null; 
 //	 					newMaterial.normalScale = new THREE.Vector2( 0.5, 0.5);
-						newMaterial.wrapRGB = new THREE.Vector3( 0.5, 0.5, 0.5 );
+						newMaterial.wrapRGB = new THREE.Vector3( 1, 1, 1 );
 						newMaterial.wrapAround = true;
 
 	 				} 
@@ -231,7 +267,7 @@ var SceneManager = function( document ) {
 		renderer.setSize( window.innerWidth, window.innerHeight );
 
 		if ( useComposer ) {
-			composer.reset();
+			composer.setSize( window.innerWidth, window.innerHeight );;
 			effectFXAA.uniforms[ 'resolution' ].value.set( 1 / SCREEN_WIDTH, 1 / SCREEN_HEIGHT );
 		}
 	}
@@ -239,8 +275,10 @@ var SceneManager = function( document ) {
 
 	this.animate = function() {
 
+//		camera.lookAt( scene.position );
+
 		if ( useComposer ) {
-			composer.render();
+			composer.render( 0.1 );
 		} else {
 			renderer.render( scene, camera );
 		}

@@ -25,7 +25,7 @@ var Controller = function() {
 	var offsety = -165;
 
 	// controlos against an obstacle
-	this.isOnObstacle = false;
+	var isOnObstacle = false;
 
 	// raycaster for collision detection
 	var raycaster = new THREE.Raycaster( new THREE.Vector3( 0, 0, 0 ), new THREE.Vector3( 1, 0, 0 ), 0, 30 );
@@ -116,7 +116,7 @@ var Controller = function() {
 		}
 
 
-		this.onKeyDown = function ( event ) {
+		var onKeyDown = function ( event ) {
 
 			switch ( event.keyCode ) {
 
@@ -144,7 +144,7 @@ var Controller = function() {
 		};
 
 
-		this.onKeyUp = function ( event ) {
+		var onKeyUp = function ( event ) {
 
 			switch( event.keyCode ) {
 
@@ -172,8 +172,8 @@ var Controller = function() {
 
 		};
 
-		document.addEventListener( 'keydown', this.onKeyDown, false );
-		document.addEventListener( 'keyup', this.onKeyUp, false );
+		document.addEventListener( 'keydown', onKeyDown, false );
+		document.addEventListener( 'keyup', onKeyUp, false );
 
 	};
 
@@ -213,9 +213,9 @@ var Controller = function() {
 		var intersections = raycaster.intersectObjects( objects );
 
 		if ( intersections.length > 0 ) 
-			this.isOnObstacle = true;
+			isOnObstacle = true;
 		else
-			this.isOnObstacle = false;
+			isOnObstacle = false;
 
 	};
 
@@ -229,7 +229,7 @@ var Controller = function() {
 
 //			detectCollision( objects );
 
-			if ( this.isOnObstacle === false ) {
+			if ( isOnObstacle === false ) {
 
 				velocityVec.x -= velocityVec.x * 10.0 * delta;
 				velocityVec.z -= velocityVec.z * 10.0 * delta;

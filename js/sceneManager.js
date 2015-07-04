@@ -1,7 +1,7 @@
 
 var SceneManager = function( document ) {
 
-	var camera = new THREE.PerspectiveCamera( 60, window.innerWidth / window.innerHeight, 1, 2000 );
+	var camera = new THREE.PerspectiveCamera( 55, window.innerWidth / window.innerHeight, 1, 2000 );
 
 	var scene = new THREE.Scene();
 	scene.fog = new THREE.Fog( 0x9999ff, 800, 3500 );
@@ -49,11 +49,14 @@ var SceneManager = function( document ) {
 		var renderModel = new THREE.RenderPass( scene, camera );
 
 		var effectBleach = new THREE.ShaderPass( THREE.BleachBypassShader );
-		effectBleach.uniforms[ 'opacity' ].value = 0.6;
+		effectBleach.uniforms[ 'opacity' ].value = 0.8;
 
-//		var effectColor = new THREE.ShaderPass( THREE.ColorCorrectionShader );
-//		effectColor.uniforms[ 'powRGB' ].value.set( 1.4, 1.45, 1.45 );
-//		effectColor.uniforms[ 'mulRGB' ].value.set( 1.1, 1.1, 1.1 );
+		var effectColor = new THREE.ShaderPass( THREE.ColorCorrectionShader );
+		effectColor.uniforms[ 'powRGB' ].value.set( 1.4, 1.45, 1.45 );
+		effectColor.uniforms[ 'mulRGB' ].value.set( 1.1, 1.1, 1.1 );
+
+		// bloom effect ( strenght, kernelSize, sigma, resolution )
+		var bloomPass = new THREE.BloomPass( 0.45, 20, 8.0, 256 );
 
 		effectFXAA = new THREE.ShaderPass( THREE.FXAAShader );
 		effectFXAA.uniforms[ 'resolution' ].value.set( 1 / window.innerWidth, 1 / window.innerHeight );
@@ -63,7 +66,7 @@ var SceneManager = function( document ) {
 
 		var bokehPass = new THREE.BokehPass( scene, camera, {
 					focus: 		1.0,
-					aperture:	0.008,
+					aperture:	0.0065,
 					maxblur:	0.3,
 
 					width: window.innerWidth,
@@ -91,8 +94,10 @@ var SceneManager = function( document ) {
 		composer = new THREE.EffectComposer( renderer );
 		composer.addPass( renderModel );
 		composer.addPass( effectBleach );
-//		composer.addPass( effectColor );
 //		composer.addPass( effectFXAA );
+		composer.addPass( bloomPass );
+//		composer.addPass( effectColor );
+		
 		composer.addPass( bokehPass );
 		
 
@@ -100,11 +105,11 @@ var SceneManager = function( document ) {
 
 	document.body.appendChild( renderer.domElement );
 
-	this.getCamera = function() {
-		return camera;	
-	};
 	this.getScene = function() {
 		return scene;	
+	};
+	this.getCamera = function() {
+		return camera;	
 	};
 	this.getRenderer = function() {
 		return renderer;	
@@ -167,21 +172,20 @@ var SceneManager = function( document ) {
 	this.initLights = function() {
  
  		// ambient light
- 		this.createAmbientLight( 0x333333 );
-
-// 		this.createHemiLight( 0xddffdd, 0x111122, 0.3, [ 0, 500 + offsety, 0 ] );
+ 		this.createAmbientLight( 0x444444 );
+// 		this.createHemiLight( 0xddffdd, 0x111122, 0.5, [ -150.036, 800 + offsety, -172.72 ] );
 
  		// external lights
 // 		this.createDirectionalLight( 0xffeeaa, [ 830, 150 + offsety, -700 ]);
-		this.createSpotLight( 0xffeeaa, 1, [ 830, 150 + offsety, -1100 ], [ 350, 0 + offsety, -1200 ], false );
+		this.createSpotLight( 0x555555, 1, [ 830, 150 + offsety, -1100 ], [ 350, 0 + offsety, -1200 ], false );
 //		this.createSpotLight( 0xffeeaa, 1, [ 830, 150 + offsety, -500 ], [ 350, 0 + offsety, -600 ], false );
 
 		// central lamp light
-		this.createPointLight( 0x999999, 1, 600, [ -150.036, 200 + offsety, -172.72 ] );
+		this.createPointLight( 0x555555, 1, 600, [ -150.036, 200 + offsety, -172.72 ] );
 //		this.createSpotLight( 0xffffff, 1, [ -150.036, 200 + offsety, -172.72 ], [ -150.036, 0 + offsety, -172.72 ], false );
 
 		// sofa light
-		this.createPointLight( 0x999999, 1, 600, [ 419.5, 239 + offsety, 49.609 ] );
+		this.createPointLight( 0x555555, 1, 600, [ 419.5, 239 + offsety, 49.609 ] );
 //		this.createSpotLight( 0xffffff, 1, [ 419.5, 239 + offsety, 49.609 ], [ 350, 0 + offsety, -800 ], false );
 
 		// opera light
@@ -202,41 +206,28 @@ var SceneManager = function( document ) {
 
 	      		if ( child instanceof THREE.Mesh ) {
 
-	      			// pre processing ops.
+	      			// pre processing geometry.
 	      			child.position.y += offsety;
 //	      			child.geometry.computeVertexNormals();
 //	      			child.geometry.computeTangents();
-
-//					child.geometry.matrixAutoUpdate = false;
-//					child.geometry.updateMatrix();
-
-	      			// material
-	 				var newMaterial = new THREE.MeshPhongMaterial( child.material );
-
+					
+					// set shading
 					if (child.material.name.indexOf("Flat") > 0) {
-	      				newMaterial.shading = THREE.FlatShading;
+	      				child.material.shading = THREE.FlatShading;
 	      			} else {
-	      				newMaterial.shading = THREE.SmoothShading;
+	      				child.material.shading = THREE.SmoothShading;
 	      			}
 
+	      			// pre processing aterial
 	 				if (child.material.bumpMap != null) {
-
 						child.material.normalMap = child.material.bumpMap;
 	 					child.material.bumpMap = null; 
-						child.material.normalScale = new THREE.Vector2( 0.5, 0.5); 
-
-//						newMaterial.shininess = 50;
-//						newMaterial.specular = newMaterial.color;
-//						newMaterial.specular = new THREE.Color(0.2, 0.2, 0.2);
-	 					newMaterial.normalMap = child.material.bumpMap;
-	 					newMaterial.bumpMap = null; 
-//	 					newMaterial.normalScale = new THREE.Vector2( 0.5, 0.5);
-						newMaterial.wrapRGB = new THREE.Vector3( 1, 1, 1 );
-						newMaterial.wrapAround = true;
-
+						child.material.wrapRGB = new THREE.Vector3( 1, 1, 1 );
+						child.material.wrapAround = true;
+	 					child.material.normalScale = new THREE.Vector2( 0.5, 0.5 );
 	 				} 
 
-	 				var mesh = new THREE.Mesh( child.geometry, newMaterial );
+	 				var mesh = new THREE.Mesh( child.geometry, child.material );
 
 					mesh.position.y += offsety;	
 
@@ -268,14 +259,12 @@ var SceneManager = function( document ) {
 
 		if ( useComposer ) {
 			composer.setSize( window.innerWidth, window.innerHeight );;
-			effectFXAA.uniforms[ 'resolution' ].value.set( 1 / SCREEN_WIDTH, 1 / SCREEN_HEIGHT );
+			effectFXAA.uniforms[ 'resolution' ].value.set( 1 / window.innerWidth, 1 / window.innerHeight );
 		}
 	}
 
 
 	this.animate = function() {
-
-//		camera.lookAt( scene.position );
 
 		if ( useComposer ) {
 			composer.render( 0.1 );

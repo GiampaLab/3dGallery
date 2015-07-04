@@ -116,7 +116,7 @@ var Controller = function() {
 		}
 
 
-		var onKeyDown = function ( event ) {
+		this.onKeyDown = function ( event ) {
 
 			switch ( event.keyCode ) {
 
@@ -144,7 +144,7 @@ var Controller = function() {
 		};
 
 
-		var onKeyUp = function ( event ) {
+		this.onKeyUp = function ( event ) {
 
 			switch( event.keyCode ) {
 
@@ -172,14 +172,14 @@ var Controller = function() {
 
 		};
 
-		document.addEventListener( 'keydown', onKeyDown, false );
-		document.addEventListener( 'keyup', onKeyUp, false );
+		document.addEventListener( 'keydown', this.onKeyDown, false );
+		document.addEventListener( 'keyup', this.onKeyUp, false );
 
 	};
 
 
 	/* get collisions with objects in the scene */
-	var detectCollision = function( objects ) {
+	this.detectCollision = function( objects ) {
 
 		// get camera direction
 		var cameraDirection = controls.getDirection(new THREE.Vector3(0, 0, 0)).clone();
@@ -227,7 +227,7 @@ var Controller = function() {
 			var time = performance.now();
 			var delta = ( time - prevTime ) / 1000;
 
-//			detectCollision( objects );
+//			this.detectCollision( objects );
 
 			if ( isOnObstacle === false ) {
 
@@ -250,5 +250,7 @@ var Controller = function() {
 			prevTime = time;
 
 		}
+
+
 	};
 }

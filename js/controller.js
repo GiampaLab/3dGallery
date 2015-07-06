@@ -6,16 +6,16 @@ var Controller = function() {
 	var havePointerLock;
 
 	// enable control movements
-//	this.enabled = false;
+	this.enabled = false;
 
 	// movements
-	var moveForward = false;
-	var moveBackward = false;
-	var moveLeft = false;
-	var moveRight = false;
+	this.moveForward = false;
+	this.moveBackward = false;
+	this.moveLeft = false;
+	this.moveRight = false;
 
 	// time to calculate velocity
-	var prevTime = -1;
+	var prevTime = performance.now();
 
 	// velocity
 	var velocity = 800.0;
@@ -30,7 +30,6 @@ var Controller = function() {
 	// raycaster for collision detection
 	var raycaster = new THREE.Raycaster( new THREE.Vector3( 0, 0, 0 ), new THREE.Vector3( 1, 0, 0 ), 0, 30 );
 
-	var that = this;
 
 	this.init = function( document, scene, camera ) {
 
@@ -49,13 +48,13 @@ var Controller = function() {
 
 				if ( document.pointerLockElement === element || document.mozPointerLockElement === element || document.webkitPointerLockElement === element ) {
 
-//					that.enabled = true;
+					this.enabled = true;
 					controls.enabled = true;
 					blocker.style.display = 'none';
 
 				} else {
 
-//					that.enabled = false;
+					this.enabled = false;
 					controls.enabled = false;
 					blocker.style.display = '-webkit-box';
 					blocker.style.display = '-moz-box';
@@ -123,22 +122,22 @@ var Controller = function() {
 
 				case 38: // up
 				case 87: // w
-					moveForward = true;
+					this.moveForward = true;
 					break;
 
 				case 37: // left
 				case 65: // a
-					moveLeft = true; 
+					this.moveLeft = true; 
 					break;
 
 				case 40: // down
 				case 83: // s
-					moveBackward = true;
+					this.moveBackward = true;
 					break;
 
 				case 39: // right
 				case 68: // d
-					moveRight = true;
+					this.moveRight = true;
 					break;
 			}
 
@@ -151,22 +150,22 @@ var Controller = function() {
 
 				case 38: // up
 				case 87: // w
-					moveForward = false;
+					this.moveForward = false;
 					break;
 
 				case 37: // left
 				case 65: // a
-					moveLeft = false;
+					this.moveLeft = false;
 					break;
 
 				case 40: // down
 				case 83: // s
-					moveBackward = false;
+					this.moveBackward = false;
 					break;
 
 				case 39: // right
 				case 68: // d
-					moveRight = false;
+					this.moveRight = false;
 					break;
 
 			}
@@ -188,19 +187,19 @@ var Controller = function() {
 		// rotate camera direction
 		var rotationMatrix = new THREE.Matrix4().makeRotationY(0);
 
-		if ((moveForward) && (moveRight))
+		if ((this.moveForward) && (this.moveRight))
 		    rotationMatrix.makeRotationY(315 * Math.PI / 180);
-		else if ((moveForward) && (moveLeft))
+		else if ((this.moveForward) && (this.moveLeft))
 		    rotationMatrix.makeRotationY(45 * Math.PI / 180);
-		else if ((moveBackward) && (moveRight))
+		else if ((this.moveBackward) && (this.moveRight))
 		    rotationMatrix.makeRotationY(225 * Math.PI / 180);
-		else if ((moveBackward) && (moveLeft))
+		else if ((this.moveBackward) && (this.moveLeft))
 		    rotationMatrix.makeRotationY(135 * Math.PI / 180);
-		else if (moveBackward)
+		else if (this.moveBackward)
 		    rotationMatrix.makeRotationY(180 * Math.PI / 180);
-		else if (moveLeft)
+		else if (this.moveLeft)
 		    rotationMatrix.makeRotationY(90 * Math.PI / 180);
-		else if (moveRight)
+		else if (this.moveRight)
 		    rotationMatrix.makeRotationY(270 * Math.PI / 180);
 		
 		cameraDirection.applyMatrix4(rotationMatrix);
@@ -221,34 +220,29 @@ var Controller = function() {
 	};
 
 
-	this.animate = function ( objects ) {
+	this.animate = function (  ) {
 
-		if ( controls.enabled ) {
+		if ( this.enabled ) {
 
 			var time = performance.now();
-			var delta;
+			var delta = ( time - prevTime ) / 1000;
 
-			if (prevTime == -1)
-				delta = 0;
-			else
-				delta = ( time - prevTime ) / 1000;
-
-			this.detectCollision( objects );
+//			this.detectCollision( objects );
 
 			if ( isOnObstacle === false ) {
 
 				velocityVec.x -= velocityVec.x * 10.0 * delta;
 				velocityVec.z -= velocityVec.z * 10.0 * delta;
 
-//				velocityVec.y -= 9.8 * 100.0 * delta; // 100.0 = mass
+				velocityVec.y -= 9.8 * 100.0 * delta; // 100.0 = mass
 
-				if ( moveForward ) velocityVec.z -= velocity * delta;
-				if ( moveBackward ) velocityVec.z += velocity * delta;
-				if ( moveLeft ) velocityVec.x -= velocity * delta;
-				if ( moveRight ) velocityVec.x += velocity * delta;
+				if ( this.moveForward ) velocityVec.z -= velocity * delta;
+				if ( this.moveBackward ) velocityVec.z += velocity * delta;
+				if ( this.moveLeft ) velocityVec.x -= velocity * delta;
+				if ( this.moveRight ) velocityVec.x += velocity * delta;
 
 				controls.getObject().translateX( velocityVec.x * delta );
-//				controls.getObject().translateY( velocityVec.y * delta );
+				controls.getObject().translateY( velocityVec.y * delta );
 				controls.getObject().translateZ( velocityVec.z * delta );
 				
 			}

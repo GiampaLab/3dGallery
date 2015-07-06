@@ -177,7 +177,7 @@ var SceneManager = function( document ) {
 
  		// external lights
 // 		this.createDirectionalLight( 0xffeeaa, [ 830, 150 + offsety, -700 ]);
-		this.createSpotLight( 0x666666, 1, [ 830, 150 + offsety, -1100 ], [ 350, 0 + offsety, -1200 ], false );
+		this.createSpotLight( 0x555555, 1, [ 830, 150 + offsety, -1100 ], [ 350, 0 + offsety, -1200 ], false );
 //		this.createSpotLight( 0xffeeaa, 1, [ 830, 150 + offsety, -500 ], [ 350, 0 + offsety, -600 ], false );
 
 		// central lamp light
@@ -224,7 +224,7 @@ var SceneManager = function( document ) {
 	 					child.material.bumpMap = null; 
 						child.material.wrapRGB = new THREE.Vector3( 1, 1, 1 );
 						child.material.wrapAround = true;
-	 					child.material.normalScale = new THREE.Vector2( 0.7, 0.7 );
+	 					child.material.normalScale = new THREE.Vector2( 0.5, 0.5 );
 	 				} 
 
 	 				var mesh = new THREE.Mesh( child.geometry, child.material );

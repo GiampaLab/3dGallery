@@ -32,9 +32,7 @@ angular.module('cromoflixGallery.controllers').
 	function animate() {
 
 		requestAnimationFrame( animate );
-
-//		controller.animate( manager.getCollisionObjects() );
-		controller.animate();
+		controller.animate( manager.getCollisionObjects() );
 		manager.animate();
 		
 	}

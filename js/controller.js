@@ -49,6 +49,7 @@ var Controller = function() {
 
 				} else {
 					controls.enabled = false;
+					prevTime = -1;
 					blocker.style.display = '-webkit-box';
 					blocker.style.display = '-moz-box';
 					blocker.style.display = 'box';

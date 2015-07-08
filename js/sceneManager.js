@@ -4,7 +4,7 @@ var SceneManager = function( document ) {
 	var camera = new THREE.PerspectiveCamera( 60, window.innerWidth / window.innerHeight, 1, 2000 );
 
 	var scene = new THREE.Scene();
-	scene.fog = new THREE.Fog( 0x99ff99, 800, 3500 );
+	scene.fog = new THREE.Fog( 0xdddddd, 800, 3500 );
 	
 	// switch shadows
 	var globalShadows = false;
@@ -24,7 +24,7 @@ var SceneManager = function( document ) {
 
 	// renderer
 	var renderer = new THREE.WebGLRenderer();
-	renderer.setClearColor( 0x99ff99 );
+	renderer.setClearColor( 0xdddddd );
 	renderer.setPixelRatio( window.devicePixelRatio );
 	renderer.setSize( window.innerWidth, window.innerHeight-50 );
 	renderer.sortObjects = false;
@@ -56,7 +56,7 @@ var SceneManager = function( document ) {
 		effectColor.uniforms[ 'mulRGB' ].value.set( 1.1, 1.1, 1.1 );
 
 		// bloom effect ( strenght, kernelSize, sigma, resolution )
-		var bloomPass = new THREE.BloomPass( 0.5, 25, 4.0, 256 );
+		var bloomPass = new THREE.BloomPass( 0.6, 20, 4.0, 256 );
 
 		effectFXAA = new THREE.ShaderPass( THREE.FXAAShader );
 		effectFXAA.uniforms[ 'resolution' ].value.set( 1 / window.innerWidth, 1 / window.innerHeight );
@@ -67,7 +67,7 @@ var SceneManager = function( document ) {
 		var bokehPass = new THREE.BokehPass( scene, camera, {
 					focus: 		1.0,
 					aperture:	0.0065,
-					maxblur:	0.3,
+					maxblur:	0.2,
 
 					width: window.innerWidth,
 					height: window.innerHeight
@@ -175,16 +175,16 @@ var SceneManager = function( document ) {
 // 		this.createHemiLight( 0xddffdd, 0x111122, 0.5, [ -150.036, 800 + offsety, -172.72 ] );
 
  		// external lights
-// 		this.createDirectionalLight( 0xffeeaa, [ 830, 150 + offsety, -700 ]);
-		this.createSpotLight( 0x99aa99, 1, [ 830, 150 + offsety, -1100 ], [ 350, 0 + offsety, -1200 ], false );
+ 		this.createDirectionalLight( 0x333333, [ 830, 150 + offsety, -700 ]);
+//		this.createSpotLight( 0x99aa99, 1, [ 830, 150 + offsety, -1100 ], [ 350, 0 + offsety, -1200 ], false );
 //		this.createSpotLight( 0xffeeaa, 1, [ 830, 150 + offsety, -500 ], [ 350, 0 + offsety, -600 ], false );
 
 		// central lamp light
-		this.createPointLight( 0x666666, 1, 800, [ -150.036, 200 + offsety, -172.72 ] );
+		this.createPointLight( 0x666666, 1, 1000, [ -150.036, 200 + offsety, -172.72 ] );
 //		this.createSpotLight( 0xffffff, 1, [ -150.036, 200 + offsety, -172.72 ], [ -150.036, 0 + offsety, -172.72 ], false );
 
 		// sofa light
-		this.createPointLight( 0x666666, 1, 800, [ 419.5, 239 + offsety, 49.609 ] );
+		this.createPointLight( 0x666666, 1, 1000, [ 419.5, 239 + offsety, 49.609 ] );
 //		this.createSpotLight( 0xffffff, 1, [ 419.5, 239 + offsety, 49.609 ], [ 350, 0 + offsety, -800 ], false );
 
 		// opera light
@@ -220,10 +220,10 @@ var SceneManager = function( document ) {
 	      			// pre processing aterial
 	 				if (child.material.bumpMap != null) {
 						child.material.normalMap = child.material.bumpMap;
+						child.material.normalScale = new THREE.Vector2( 1.0, 1.0 );
 	 					child.material.bumpMap = null; 
 						child.material.wrapRGB = new THREE.Vector3( 1, 1, 1 );
 						child.material.wrapAround = true;
-	 					child.material.normalScale = new THREE.Vector2( 0.75, 0.75 );
 	 				} 
 
 	 				var mesh = new THREE.Mesh( child.geometry, child.material );

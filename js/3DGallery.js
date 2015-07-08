@@ -21,7 +21,7 @@ angular.module('cromoflixGallery.controllers').
 	
 		controller.init( document, manager.getScene(), manager.getCamera() );
 		manager.loadJSONScene ( "./model/roomv1.2.json" );
-//		manager.loadJSON ( "./model/statue.json" );
+//		manager.loadJSONScene ( "./model/statue.json" );
 		manager.initLights();
 
 		window.addEventListener( 'resize', onWindowResize, false );

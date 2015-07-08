@@ -15,7 +15,7 @@ var Controller = function() {
 	var prevTime = -1;
 
 	// velocity
-	var velocity = 800.0;
+	var velocity = 1000.0;
 	var velocityVec = new THREE.Vector3();
 
 	// all objects translate y axis

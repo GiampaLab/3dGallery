@@ -4,7 +4,7 @@ var SceneManager = function( document ) {
 	var camera = new THREE.PerspectiveCamera( 60, window.innerWidth / window.innerHeight, 1, 2000 );
 
 	var scene = new THREE.Scene();
-	scene.fog = new THREE.Fog( 0xdddddd, 800, 3500 );
+	scene.fog = new THREE.Fog( 0xffffff, 800, 3500 );
 	
 	// switch shadows
 	var globalShadows = false;
@@ -24,7 +24,7 @@ var SceneManager = function( document ) {
 
 	// renderer
 	var renderer = new THREE.WebGLRenderer();
-	renderer.setClearColor( 0xdddddd );
+	renderer.setClearColor( 0xffffff );
 	renderer.setPixelRatio( window.devicePixelRatio );
 	renderer.setSize( window.innerWidth, window.innerHeight-50 );
 	renderer.sortObjects = false;
@@ -56,7 +56,7 @@ var SceneManager = function( document ) {
 		effectColor.uniforms[ 'mulRGB' ].value.set( 1.1, 1.1, 1.1 );
 
 		// bloom effect ( strenght, kernelSize, sigma, resolution )
-		var bloomPass = new THREE.BloomPass( 0.35, 25, 4.0, 256 );
+		var bloomPass = new THREE.BloomPass( 0.7, 15, 4.0, 256 );
 
 		effectFXAA = new THREE.ShaderPass( THREE.FXAAShader );
 		effectFXAA.uniforms[ 'resolution' ].value.set( 1 / window.innerWidth, 1 / window.innerHeight );
@@ -67,7 +67,7 @@ var SceneManager = function( document ) {
 		var bokehPass = new THREE.BokehPass( scene, camera, {
 					focus: 		1.0,
 					aperture:	0.0065,
-					maxblur:	0.2,
+					maxblur:	0.3,
 
 					width: window.innerWidth,
 					height: window.innerHeight
@@ -98,7 +98,7 @@ var SceneManager = function( document ) {
 //		composer.addPass( effectFXAA );	
 //		composer.addPass( effectColor );
 		composer.addPass( bokehPass );
-
+		
 
 	}
 
@@ -147,7 +147,9 @@ var SceneManager = function( document ) {
 	this.createHemiLight = function ( colorStart, colorEnd, intensity, pos ) {
 
 		var hemiLight = new THREE.HemisphereLight( colorStart, colorEnd, intensity );
-		hemiLight.position.set( pos[0], pos[1], pos[2] );
+		hemiLight.color.setHSL( 0.6, 1, 0.6 );
+		hemiLight.groundColor.setHSL( 0.095, 1, 0.75 );
+//		hemiLight.position.set( pos[0], pos[1], pos[2] );
 
 		scene.add( hemiLight );
 
@@ -171,8 +173,8 @@ var SceneManager = function( document ) {
 	this.initLights = function() {
  
  		// ambient light
- 		this.createAmbientLight( 0x444444 );
-// 		this.createHemiLight( 0xddffdd, 0x111122, 0.5, [ -150.036, 800 + offsety, -172.72 ] );
+// 		this.createAmbientLight( 0x222222 );
+ 		this.createHemiLight( 0xffffff, 0xffffff, 0.2, [ -150.036, 800 + offsety, -172.72 ] );
 
  		// external lights
  		this.createDirectionalLight( 0x333333, [ 830, 150 + offsety, -700 ]);

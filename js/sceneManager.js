@@ -28,7 +28,7 @@ var SceneManager = function( document ) {
 	renderer.setPixelRatio( window.devicePixelRatio );
 	renderer.setSize( window.innerWidth, window.innerHeight-50 );
 	renderer.sortObjects = false;
-//	renderer.physicallyBasedShading = true;
+	renderer.physicallyBasedShading = true;
 
 	if ( globalShadows ) {
 		renderer.shadowMapEnabled = true;
@@ -56,7 +56,7 @@ var SceneManager = function( document ) {
 		effectColor.uniforms[ 'mulRGB' ].value.set( 1.1, 1.1, 1.1 );
 
 		// bloom effect ( strenght, kernelSize, sigma, resolution )
-		var bloomPass = new THREE.BloomPass( 0.6, 20, 4.0, 256 );
+		var bloomPass = new THREE.BloomPass( 0.35, 25, 4.0, 256 );
 
 		effectFXAA = new THREE.ShaderPass( THREE.FXAAShader );
 		effectFXAA.uniforms[ 'resolution' ].value.set( 1 / window.innerWidth, 1 / window.innerHeight );
@@ -207,7 +207,7 @@ var SceneManager = function( document ) {
 
 	      			// pre processing geometry.
 	      			child.position.y += offsety;
-//	      			child.geometry.computeVertexNormals();
+	      			child.geometry.computeVertexNormals();
 //	      			child.geometry.computeTangents();
 					
 					// set shading
